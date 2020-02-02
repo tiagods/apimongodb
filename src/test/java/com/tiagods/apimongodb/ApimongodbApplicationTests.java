@@ -29,48 +29,42 @@ import java.util.List;
 import java.util.Optional;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest
 public class ApimongodbApplicationTests {
 
-	private static final ObjectMapper om = new ObjectMapper();
+    @Autowired
+    private ClienteRepository repository;
 
-	@Autowired
-	private TestRestTemplate restTemplate;
+    //@Before
+    public void init(){
+        if(repository.findAll().isEmpty()) {
+            List list = Arrays.asList(
+                    new Cliente(null, "Joao Barbosa", 10055599912L, "Rua A", "1133335555", "joao@mail.com"),
+                    new Cliente(null, "Marcos Barbosa", 50055599913L, "Rua B", "1133335588", "marcos@mail.com"),
+                    new Cliente(null, "Fabiano Araujo", 10055596912L, "Rua A", "1133335555", "joao@mail.com"),
+                    new Cliente(null, "Juliano", 55555599913L, "Rua B", "1133335588", "marcos@mail.com"),
+                    new Cliente(null, "Joao Silva", 99955599912L, "Rua A", "1133335555", "joao@mail.com"),
+                    new Cliente(null, "Marcos Felix", 70055599913L, "Rua B", "1133335588", "marcos@mail.com")
+            );
+            repository.saveAll(list);
+        }
+    }
 
-	@MockBean
-	private ClienteRepository mockRepository;
-
-	private static List<Cliente> list;
-
-	@BeforeClass
-	public static void initClass(){
-		 list = Arrays.asList(
-				new Cliente("1", "Joao Barbosa", 10055599912L, "Rua A", "1133335555", "joao@mail.com"),
-				new Cliente("2", "Marcos", 50055599913L, "Rua B", "1133335588", "marcos@mail.com")
-		 );
-
-	}
-
-
-	@Before
-	public void init() {
-		Mockito.when(mockRepository.findById("1")).thenReturn(Optional.of(list.get(0)));
-	}
-
-	@Test
-	public void listarTudo() throws Exception{
-		Mockito.when(mockRepository.findAll()).thenReturn(list);
-
-		String expected = om.writeValueAsString(list);
-
-		ResponseEntity<String> response = restTemplate.getForEntity("/api/clientes", String.class);
-
-		Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
-
-		JSONAssert.assertEquals(expected, response.getBody(), false);
-
-		Mockito.verify(mockRepository, Mockito.times(2)).findAll();
-//		Mockito.verify(mockRepository, Mockito.times(0)).save(ArgumentMatchers.any(Cliente.class));
-	}
-
+    //@Test
+    public void test(){
+        Optional<Cliente> byCpf = repository.findByCpf(50055599913L);
+        System.out.println(byCpf.get());
+        Assert.assertTrue(byCpf.isPresent());
+    }
+    //@Test
+    public void test2(){
+        List<Cliente> list = repository.findAllByNome("Barbosa");
+        Assert.assertEquals(2,list.size());
+        list = repository.findAllByNome("Joao");
+        Assert.assertEquals(2,list.size());
+        list = repository.findAllByNome("Felix");
+        Assert.assertEquals(1,list.size());
+        list = repository.findAllByNome("Tiago");
+        Assert.assertEquals(0,list.size());
+    }
 }

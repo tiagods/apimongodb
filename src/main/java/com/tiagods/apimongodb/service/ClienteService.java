@@ -41,13 +41,19 @@ public class ClienteService {
         if(optional.isPresent()) return optional.get();
         else throw new ClienteNotFoundException("Cliente não encontrado");
     }
-    public List<Cliente> listarPorNome(String nome){
-        return clienteRepository.findByNome(nome);
-    }
 
     public void atualizar(String id, Cliente cliente) {
         buscarPorId(id);
         cliente.setId(id);
         clienteRepository.save(cliente);
+    }
+
+    public void deletar(String id) {
+        buscarPorId(id);
+        clienteRepository.deleteById(id);
+    }
+
+    public List<Cliente> buscarPorNome(String nome) {
+        return clienteRepository.findAllByNome(nome);
     }
 }

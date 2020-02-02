@@ -21,17 +21,16 @@ public class Cliente {
     @Id
     private String id;
     @ApiModelProperty(value = "Nome do cliente")
-    @NotNull @NotBlank
+    @NotNull(message = "Nome obrigatorio") @NotBlank(message = "Nome invalido")
     private String nome;
     @ApiModelProperty(value = "Cpf do cliente")
-    @NotNull
-    @Size(min = 11, max = 11, message = "Cpf incorreto, necessario 11 digitos")
+    @NotNull(message = "Cpf obrigatório")
     private long cpf;
     @ApiModelProperty(value = "Endereco completo do cliente")
     private String endereco;
     @ApiModelProperty(value = "Telefone do cliente")
     private String telefone;
     @ApiModelProperty(value = "Email do cliente")
-    @NotNull @NotBlank
+    @NotNull(message = "Email obrigatorio") @NotBlank(message = "Email invalido")
     private String email;
 }
