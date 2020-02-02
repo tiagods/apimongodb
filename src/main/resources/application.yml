@@ -1,0 +1,17 @@
+spring:
+  data:
+    mongodb:
+      port: 27017
+      database: clients
+#  primary:
+#    mongodb:
+#      port: 27017
+#      database: clients
+#  secundary:
+#    mongodb:
+#      port: 27017
+#      database: products
+#  tertiary:
+#    mongodb:
+#      port: 27017
+#      database: clientsproducts
