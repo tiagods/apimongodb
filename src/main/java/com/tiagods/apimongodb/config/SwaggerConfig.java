@@ -1,6 +1,5 @@
 package com.tiagods.apimongodb.config;
 
-import com.tiagods.apimongodb.controller.ClienteController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,7 +24,7 @@ public class SwaggerConfig {
     public Docket getDocket() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.tiagods.apimongodb.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.tiagods.apimongodb.primary.controller"))
                 .paths(PathSelectors.ant("/api/**"))
                 .build()
                 .useDefaultResponseMessages(false)

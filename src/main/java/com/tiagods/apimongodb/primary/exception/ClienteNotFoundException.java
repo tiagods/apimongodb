@@ -1,7 +1,4 @@
-package com.tiagods.apimongodb.exception;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+package com.tiagods.apimongodb.primary.exception;
 
 public class ClienteNotFoundException extends RuntimeException {
     public ClienteNotFoundException(String message){

@@ -1,7 +1,7 @@
-package com.tiagods.apimongodb.controller;
+package com.tiagods.apimongodb.primary.controller;
 
-import com.tiagods.apimongodb.model.Cliente;
-import com.tiagods.apimongodb.service.ClienteService;
+import com.tiagods.apimongodb.primary.model.Cliente;
+import com.tiagods.apimongodb.primary.service.ClienteService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 
 @RestController
