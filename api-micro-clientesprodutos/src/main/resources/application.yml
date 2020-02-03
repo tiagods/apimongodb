@@ -1,0 +1,19 @@
+configuracao:
+  cliente:
+    service:
+      url: http://localhost:8080
+  produto:
+    service:
+      url: http://localhost:8081
+server:
+  port: 8082
+spring:
+  data:
+    mongodb:
+      port: 27017
+      database: clients_products
+      host: 192.168.43.187
+#  tertiary:
+#    mongodb:
+#      port: 27017
+#      database: clientsproducts

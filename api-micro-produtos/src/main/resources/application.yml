@@ -1,0 +1,12 @@
+server:
+  port: 8081
+spring:
+  data:
+    mongodb:
+      port: 27017
+      database: products
+      host: 192.168.43.187
+#  tertiary:
+#    mongodb:
+#      port: 27017
+#      database: clientsproducts
