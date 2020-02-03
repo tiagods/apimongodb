@@ -1,5 +1,9 @@
-package com.tiagods.apimongodb.primary.exception;
+package com.tiagods.apimongodb.exception;
 
+import com.tiagods.apimongodb.primary.ClienteJaExisteException;
+import com.tiagods.apimongodb.primary.ClienteNotFoundException;
+import com.tiagods.apimongodb.secundary.ProdutoJaExisteException;
+import com.tiagods.apimongodb.secundary.ProdutoNotFoundException;
 import lombok.Data;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,8 +28,17 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         response.sendError(HttpStatus.FORBIDDEN.value());
     }
 
+    @ExceptionHandler(ProdutoJaExisteException.class)
+    public void produtoJaExisteException(HttpServletResponse response) throws Exception{
+        response.sendError(HttpStatus.FORBIDDEN.value());
+    }
+
     @ExceptionHandler(ClienteNotFoundException.class)
     public void clientNotFoundException(HttpServletResponse response) throws IOException {
+        response.sendError(HttpStatus.NOT_FOUND.value());
+    }
+    @ExceptionHandler(ProdutoNotFoundException.class)
+    public void produtoNotFoundException(HttpServletResponse response) throws IOException {
         response.sendError(HttpStatus.NOT_FOUND.value());
     }
 

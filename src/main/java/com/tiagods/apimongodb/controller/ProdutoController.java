@@ -1,5 +1,8 @@
-package com.tiagods.apimongodb.secundary;
+package com.tiagods.apimongodb.controller;
 
+import com.tiagods.apimongodb.Produto;
+import com.tiagods.apimongodb.secundary.ProdutoService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -11,8 +14,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 
-@RestController
-@RequestMapping("/api/produtos")
+//@RestController
+//@RequestMapping("/api/produtos")
 public class ProdutoController {
 
     @Autowired

@@ -1,4 +1,4 @@
-package com.tiagods.apimongodb.primary.model;
+package com.tiagods.apimongodb;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;

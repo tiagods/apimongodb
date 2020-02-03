@@ -1,6 +1,6 @@
-package com.tiagods.apimongodb.primary.repository;
+package com.tiagods.apimongodb.primary;
 
-import com.tiagods.apimongodb.primary.model.Cliente;
+import com.tiagods.apimongodb.Cliente;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;

@@ -1,7 +1,7 @@
-package com.tiagods.apimongodb.primary.controller;
+package com.tiagods.apimongodb.controller;
 
-import com.tiagods.apimongodb.primary.model.Cliente;
-import com.tiagods.apimongodb.primary.service.ClienteService;
+import com.tiagods.apimongodb.Cliente;
+import com.tiagods.apimongodb.primary.ClienteService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;

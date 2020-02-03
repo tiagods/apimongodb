@@ -1,7 +1,6 @@
 package com.tiagods.apimongodb;
 
-import com.tiagods.apimongodb.primary.model.Cliente;
-import com.tiagods.apimongodb.primary.repository.ClienteRepository;
+import com.tiagods.apimongodb.primary.ClienteRepository;
 import org.junit.Assert;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

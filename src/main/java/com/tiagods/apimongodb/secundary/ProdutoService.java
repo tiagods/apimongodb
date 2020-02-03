@@ -1,8 +1,6 @@
 package com.tiagods.apimongodb.secundary;
 
-import com.tiagods.apimongodb.primary.exception.ClienteJaExisteException;
-import com.tiagods.apimongodb.primary.exception.ClienteNotFoundException;
-import com.tiagods.apimongodb.primary.model.Cliente;
+import com.tiagods.apimongodb.Produto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,9 +1,12 @@
 package com.tiagods.apimongodb;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tiagods.apimongodb.primary.ClienteRepository;
-import com.tiagods.apimongodb.primary.ClienteService;
-import org.junit.*;
+import com.tiagods.apimongodb.secundary.ProdutoRepository;
+import com.tiagods.apimongodb.secundary.ProdutoService;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.mockito.InjectMocks;
@@ -22,42 +25,40 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ClienteTest {
-
+public class ProdutoTest {
     private static final ObjectMapper om = new ObjectMapper();
 
     @Autowired
     private TestRestTemplate restTemplate;
 
     @MockBean
-    private ClienteRepository mockRepository;
+    private ProdutoRepository mockRepository;
 
     @InjectMocks
-    private ClienteService mockService;
+    private ProdutoService mockService;
 
-    private static List<Cliente> list;
+    private static List<Produto> list;
 
-    private String PATH = "/api/clientes";
+    private String PATH = "/api/produtos";
 
     @BeforeClass
     public static void initClass(){
         list = Arrays.asList(
-                new Cliente("1", "Joao Barbosa", 10055599912L, "Rua A", "1133335555", "joao@mail.com"),
-                new Cliente("2", "Marcos Barbosa", 50055599913L, "Rua B", "1133335588", "marcos@mail.com"),
-                new Cliente("3", "Fabiano Araujo", 10055596912L, "Rua A", "1133335555", "joao@mail.com"),
-                new Cliente("4", "Juliano", 55555599913L, "Rua B", "1133335588", "marcos@mail.com"),
-                new Cliente("5", "Joao Silva", 99955599912L, "Rua A", "1133335555", "joao@mail.com"),
-                new Cliente("6", "Marcos Felix", 70055599913L, "Rua B", "1133335588", "marcos@mail.com")
+                new Produto("1", "PRODUCT A"),
+                new Produto("2", "PRODUCT B"),
+                new Produto("3", "PRODUCT C"),
+                new Produto("4", "PRODUCT D"),
+                new Produto("5", "PRODUCT E"),
+                new Produto("6", "PRODUCT F")
         );
     }
 
     @Test
-    public void listarClientes_200() throws Exception{
+    public void listarProdutos_200() throws Exception{
         Mockito.when(mockRepository.findAll()).thenReturn(list);
         String expected = om.writeValueAsString(list);
         ResponseEntity<String> response = restTemplate.getForEntity(PATH, String.class);
@@ -67,7 +68,7 @@ public class ClienteTest {
     }
     @Test
     public void buscarPorId_200() throws Exception {
-        String expected = "{\"id\":\"1\",\"nome\":\"Joao Barbosa\",\"cpf\":10055599912,\"endereco\":\"Rua A\",\"telefone\":\"1133335555\",\"email\":\"joao@mail.com\"}";
+        String expected = "{\"id\":\"1\",\"nome\":\"PRODUCT A\"}";
         Mockito.when(mockRepository.findById(Mockito.anyString())).thenReturn(Optional.of(list.get(0)));
         ResponseEntity<String> response = restTemplate.getForEntity(PATH+"/1", String.class);
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -78,7 +79,7 @@ public class ClienteTest {
     }
     @Test
     public void buscarPorIdInexistente_404() throws Exception {
-        String expected = "{status:404,error:\"Not Found\",message: \"Cliente não existe na base de dados\"}";
+        String expected = "{status:404,error:\"Not Found\",message: \"Produto não existe na base de dados\"}";
         ResponseEntity<String> response = restTemplate.getForEntity(PATH+"/a213s1df5", String.class);
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         JSONAssert.assertEquals(expected, response.getBody() ,false);
@@ -107,71 +108,61 @@ public class ClienteTest {
         Mockito.verify(mockRepository, Mockito.times(0)).deleteById("1212");
     }
     @Test
-    public void criarCliente1_201() throws Exception {
-        Cliente cliente = list.get(0);
-
+    public void criarProduto1_201() throws Exception {
+        Produto produto = list.get(0);
         MockHttpServletRequest request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
-
-        Mockito.when(mockRepository.save(Mockito.any(Cliente.class))).thenReturn(cliente);
-        ResponseEntity<String> response = restTemplate.postForEntity(PATH, cliente, String.class);
+        Mockito.when(mockRepository.save(Mockito.any(Produto.class))).thenReturn(produto);
+        ResponseEntity<String> response = restTemplate.postForEntity(PATH, produto, String.class);
         Assert.assertEquals(HttpStatus.CREATED, response.getStatusCode());
         Assert.assertEquals(response.getHeaders().getLocation().getPath(),PATH+"/1");
-        Mockito.verify(mockRepository, Mockito.times(1)).findByCpf(cliente.getCpf());
-        Mockito.verify(mockRepository, Mockito.times(1)).save(Mockito.any(Cliente.class));
+        Mockito.verify(mockRepository, Mockito.times(1)).findByNome(produto.getNome());
+        Mockito.verify(mockRepository, Mockito.times(1)).save(Mockito.any(Produto.class));
     }
     @Test
-    public void criarClienteComNomeNulo_400() throws Exception {
-        Cliente cliente = list.get(0);
-        cliente.setNome(null);
-        Mockito.when(mockRepository.save(Mockito.any(Cliente.class))).thenReturn(cliente);
-        ResponseEntity<String> response = restTemplate.postForEntity(PATH, cliente, String.class);
+    public void criarProdutoComNomeNulo_400() throws Exception {
+        Produto produto = list.get(0);
+        produto.setNome(null);
+        Mockito.when(mockRepository.save(Mockito.any(Produto.class))).thenReturn(produto);
+        ResponseEntity<String> response = restTemplate.postForEntity(PATH, produto, String.class);
         Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        Mockito.verify(mockRepository, Mockito.times(0)).findByCpf(cliente.getCpf());
-        Mockito.verify(mockRepository, Mockito.times(0)).save(Mockito.any(Cliente.class));
+        Mockito.verify(mockRepository, Mockito.times(0)).findByNome(produto.getNome());
+        Mockito.verify(mockRepository, Mockito.times(0)).save(Mockito.any(Produto.class));
     }
 
     @Test
-    public void criarClienteCpfDuplicado_403() throws Exception {
-        Cliente cliente1 = list.get(0);
-        Cliente cliente2 = list.get(1);
-        cliente2.setCpf(cliente1.getCpf());
-        Mockito.when(mockRepository.findByCpf(Mockito.anyLong())).thenReturn(Optional.of(cliente1));
-        ResponseEntity<String> response = restTemplate.postForEntity(PATH, cliente2, String.class);
+    public void criarProdutoComNomeDuplicado_403() throws Exception {
+        Produto produto1 = list.get(0);
+        Produto produto2 = list.get(1);
+        produto2.setNome(produto1.getNome());
+        Mockito.when(mockRepository.findByNome(Mockito.anyString())).thenReturn(Optional.of(produto1));
+        ResponseEntity<String> response = restTemplate.postForEntity(PATH, produto2, String.class);
         Assert.assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
-        Mockito.verify(mockRepository, Mockito.times(1)).findByCpf(cliente2.getCpf());
-        Mockito.verify(mockRepository, Mockito.times(0)).save(Mockito.any(Cliente.class));
+        Mockito.verify(mockRepository, Mockito.times(1)).findByNome(produto2.getNome());
+        Mockito.verify(mockRepository, Mockito.times(0)).save(Mockito.any(Produto.class));
     }
     @Test
-    public void atualizarCliente_204(){
-        Cliente cliente = list.get(0);
-        Mockito.when(mockRepository.save(Mockito.any(Cliente.class))).thenReturn(cliente);
-        Mockito.when(mockRepository.findById(Mockito.anyString())).thenReturn(Optional.of(cliente));
-        String patchInJson = "{\"nome\":\"Joao Barbosa\",\"cpf\":10055599912,\"endereco\":\"Rua A\",\"telefone\":\"1133335555\",\"email\":\"joao@mail.com\"}";
+    public void atualizarProduto_204(){
+        Produto produto = list.get(0);
+        Mockito.when(mockRepository.save(Mockito.any(Produto.class))).thenReturn(produto);
+        Mockito.when(mockRepository.findById(Mockito.anyString())).thenReturn(Optional.of(produto));
+        String patchInJson = "{\"nome\":\"PRODUCT ZZZ\"}";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<>(patchInJson, headers);
         ResponseEntity<String> response = restTemplate.exchange(PATH+"/1", HttpMethod.PUT, entity, String.class);
         Assert.assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
         Mockito.verify(mockRepository, Mockito.times(1)).findById("1");
-        Mockito.verify(mockRepository, Mockito.times(1)).save(Mockito.any(Cliente.class));
+        Mockito.verify(mockRepository, Mockito.times(1)).save(Mockito.any(Produto.class));
 
     }
     @Test
-    public void buscarPorCpf_200(){
-       Mockito.when(mockRepository.findByCpf(Mockito.anyLong())).thenReturn(Optional.of(list.get(0)));
-       ResponseEntity<String> response = restTemplate.getForEntity(PATH+"/10055599912/cpf", String.class);
-       Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
-       Mockito.verify(mockRepository, Mockito.times(1)).findByCpf(10055599912L);
-    }
-    @Test
     public void buscarPorNome_200(){
-        Mockito.when(mockRepository.findAllByNome(Mockito.anyString())).thenReturn(
-                list.stream().filter(c->c.getNome().contains("Barbosa")).collect(Collectors.toList())
-        );
-        ResponseEntity<String> response = restTemplate.getForEntity(PATH+"/Barbosa/nome", String.class);
+        Produto produto = list.get(0);
+        Mockito.when(mockRepository.findByNome(Mockito.anyString())).thenReturn(Optional.of(produto));
+        ResponseEntity<String> response = restTemplate.getForEntity(PATH+"/PRODUCT A/nome", String.class);
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assert.assertEquals(MediaType.APPLICATION_JSON_UTF8, response.getHeaders().getContentType());
-        Mockito.verify(mockRepository, Mockito.times(1)).findAllByNome("Barbosa");
+        Mockito.verify(mockRepository, Mockito.times(1)).findByNome("PRODUCT A");
     }
 }

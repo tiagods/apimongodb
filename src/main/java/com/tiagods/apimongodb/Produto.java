@@ -1,4 +1,4 @@
-package com.tiagods.apimongodb.secundary;
+package com.tiagods.apimongodb;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
