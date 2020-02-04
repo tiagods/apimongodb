@@ -44,7 +44,7 @@ public class ClienteController {
 
     @ApiOperation(value = "Retorna um cliente pelo id")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Retorna a lista de clientes por id"),
+            @ApiResponse(code = 200, message = "Retorna um cliente"),
             @ApiResponse(code = 404, message = "Cliente não existe na base"),
             @ApiResponse(code = 400, message = "Cliente com parametro nulo ou invalido"),
             @ApiResponse(code = 500, message = "Foi gerada uma exceção"),

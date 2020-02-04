@@ -5,8 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(url = "${configuracao.cliente.service.url}", name = "cliente")
-public interface ClienteRestClient {
-    @GetMapping("/api/clientes/{id}")
-    ResponseEntity buscarCliente(@PathVariable String id);
+@FeignClient(url = "${configuracao.produto.service.url}", name = "produto")
+public interface ProdutoRestClient {
+    @GetMapping("/api/produtos/{id}")
+    ResponseEntity buscarProduto(@PathVariable String id);
 }

@@ -16,7 +16,7 @@ public class WebMvcConfiguration {
                 registry.addMapping("/**")
                         .allowedOrigins("*")
                         .allowedHeaders("*")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "TRACE", "CONNECT");;
+                        .allowedMethods("*");;
             }
         };
     }

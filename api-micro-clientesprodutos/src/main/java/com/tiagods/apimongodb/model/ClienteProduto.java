@@ -1,5 +1,6 @@
 package com.tiagods.apimongodb.model;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,9 +16,14 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ClienteProduto {
+    @ApiModelProperty(value = "Id do autogerado")
     @Id
     private String id;
+    @ApiModelProperty(value = "Id que vem do cliente")
+    @NotNull
     private String clienteId;
+    @ApiModelProperty(value = "Id que vem do produto")
+    @NotNull
     private String produtoId;
-    private boolean ativo;
+    private boolean status;
 }

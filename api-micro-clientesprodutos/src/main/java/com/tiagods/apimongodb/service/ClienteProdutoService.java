@@ -1,10 +1,11 @@
 package com.tiagods.apimongodb.service;
 
 import com.tiagods.apimongodb.model.ClienteProduto;
-import com.tiagods.apimongodb.exception.ProdutoJaExisteException;
-import com.tiagods.apimongodb.exception.ProdutoNotFoundException;
+import com.tiagods.apimongodb.exception.ClienteProdutoNotFoundException;
 import com.tiagods.apimongodb.repository.ClienteProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,35 +17,49 @@ public class ClienteProdutoService {
     @Autowired
     private ClienteProdutoRepository repository;
 
+    @Autowired
+    private ClienteRestClient clienteRest;
+
+    @Autowired
+    private ProdutoRestClient produtoRest;
+
     public List<ClienteProduto> listar(){
         return repository.findAll();
     }
 
     public ClienteProduto salvar(ClienteProduto clienteProduto){
-        try {
-            ClienteProduto p = buscarPorNome(clienteProduto.getNome());
-        } catch (ProdutoNotFoundException e) {
-            clienteProduto.setNome(clienteProduto.getNome().toUpperCase());
-            return repository.save(clienteProduto);
+        validarRegistros(clienteProduto);
+        buscarExistenteEDesativarStatus(clienteProduto);
+        return repository.save(clienteProduto);
+    }
+
+    /*
+    Valida se o registro ja existe, se sim, irá atualizar o status para false
+     */
+    public void buscarExistenteEDesativarStatus(ClienteProduto clienteProduto){
+        Optional<ClienteProduto> op = repository.findByClienteIdAndProdutoIdAndStatusIsTrue(clienteProduto.getClienteId(), clienteProduto.getProdutoId());
+        if(op.isPresent()){
+            ClienteProduto result = op.get();
+            result.setStatus(false);
+            repository.save(result);
         }
     }
 
-    public ClienteProduto buscarPorId(String id){
-        Optional<ClienteProduto> optional = repository.findById(id);
-        if(optional.isPresent())
-            return optional.get();
-        else throw new ProdutoNotFoundException("Produto não existe na base de dados");
+    public void validarRegistros(ClienteProduto clienteProduto) {
+        try {
+            clienteRest.buscarCliente(clienteProduto.getClienteId());
+            produtoRest.buscarProduto(clienteProduto.getProdutoId());
+        }catch (feign.FeignException ex){
+            throw new ClienteProdutoNotFoundException("Não existe cliente ou id com os parametros informados");
+        }
     }
-
-    public void atualizar(String id, ClienteProduto clienteProduto) {
-        buscarPorId(id);
-        clienteProduto.setId(id);
-        repository.save(clienteProduto);
+    public ClienteProduto buscarPorId(String id) {
+        Optional<ClienteProduto> opt = repository.findById(id);
+        if(opt.isPresent()){
+            return opt.get();
+        }
+        else{
+            throw new ClienteProdutoNotFoundException("Não existe umm registro com o id informado");
+        }
     }
-
-    public void deletar(String id) {
-        buscarPorId(id);
-        repository.deleteById(id);
-    }
-
 }

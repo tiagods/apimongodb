@@ -1,6 +1,9 @@
 package com.tiagods.apimongodb.exception;
 
+import com.tiagods.apimongodb.model.ClienteProduto;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +15,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,14 +23,14 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(ProdutoJaExisteException.class)
-    public void produtoJaExisteException(HttpServletResponse response) throws Exception{
-        response.sendError(HttpStatus.FORBIDDEN.value());
+    @ExceptionHandler(ClienteProdutoNotFoundException.class)
+    public ResponseEntity<?> clientNotFoundException(ClienteProdutoNotFoundException ex,HttpServletResponse response) {
+        return buildResponseEntity(HttpStatus.NOT_FOUND, Arrays.asList(ex.getMessage()));
     }
-
-    @ExceptionHandler(ProdutoNotFoundException.class)
-    public void produtoNotFoundException(HttpServletResponse response) throws IOException {
-        response.sendError(HttpStatus.NOT_FOUND.value());
+    
+    private ResponseEntity<?> buildResponseEntity(HttpStatus status, List<String> erros) {
+        ResultError resultError = new ResultError(new Date(),status.value(), erros);
+        return new ResponseEntity<>(resultError, status);
     }
 
     @Override
@@ -45,6 +49,8 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     }
 
     @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     public class ResultError{
         private Date timestamp;
         private int status;

@@ -12,7 +12,7 @@ spring:
     mongodb:
       port: 27017
       database: clients_products
-      host: 192.168.43.187
+      host: 192.168.43.20
 #  tertiary:
 #    mongodb:
 #      port: 27017
