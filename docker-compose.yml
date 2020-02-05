@@ -1,40 +1,63 @@
-version: '3.7'
+version: '3.3'
 services:
+  mongo:
+    build:
+      context: ./Produtos
+      dockerfile: Dockerfile
+    ports:
+      - 27017:27017
+    restart: always
+    volumes:
+      - db-data:/var/lib/mongo
   app-micro-clients:
     build:
       context: ./api-micro-clientes
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - 8080:8080
+    links:
+      - mongo
     restart: always
     depends_on: 
-      - db
-    networks:
-      - backend
-      - frontend
+      - mongo
   app-micro-products:
     build:
       context: ./api-micro-produtos
       dockerfile: Dockerfile
     ports:
-      - "8081:8081"
+      - 8081:8081
+    links:
+      - mongo
     restart: always
     depends_on: 
-      - db
-    networks:
-      - backend
-      - frontend
-  db:
-    image: mongo
+      - mongo
+  app-micro-clients-products:
+    build:
+      context: ./api-micro-clientesprodutos
+      dockerfile: Dockerfile
     ports:
-      - "27017:27017"
+      - 8082:8082
+    links:
+      - mongo
     restart: always
-    volumes:
-      - db-data:/var/lib/mongo
-    networks:
-      - backend  
+    depends_on: 
+      - mongo
+      - app-micro-clients
+      - app-micro-products
+  app-ui:
+    build:
+      context: ./cliente-produto-ui
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
+    links:
+      - app-micro-clients-products
+      - app-micro-clients
+      - app-micro-products
+    restart: always
+    depends_on: 
+      - app-micro-clients-products
+      - app-micro-clients
+      - app-micro-products
 volumes:
   db-data:
-networks:
-  backend:
-  frontend: 
