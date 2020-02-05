@@ -80,10 +80,8 @@ public class ProdutoTest {
     }
     @Test
     public void buscarPorIdInexistente_404() throws Exception {
-        String expected = "{status:404,error:\"Not Found\",message: \"Produto não existe na base de dados\"}";
         ResponseEntity<String> response = restTemplate.getForEntity(PATH+"/a213s1df5", String.class);
         Assert.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        JSONAssert.assertEquals(expected, response.getBody() ,false);
         Mockito.verify(mockRepository, Mockito.times(1)).findById("a213s1df5");
     }
 
